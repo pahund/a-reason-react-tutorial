@@ -1,5 +1,6 @@
 {
   "name": "todo-list-reason-react",
+  "version": "1.0.0",
   "scripts": {
     "start": "bsb -make-world -w",
     "js": "bsb -make-world",
