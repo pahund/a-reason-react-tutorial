@@ -36,6 +36,10 @@ body {
   padding: 20px;
 }
 
+.add-todo {
+  margin-top: 10px;
+}
+
 .items {
   margin: 10px 0;
   text-align: center;
@@ -71,5 +75,9 @@ input[type="checkbox"] {
 input[type="text"] {
   align-self: stretch;
   padding: 3px 5px;
-  margin-top: 20px;
+  height: 13px;
+}
+
+label {
+  height: 23px;
 }

@@ -1,5 +1,6 @@
 type item = {
   id: int,
   title: string,
-  completed: bool
+  completed: bool,
+  editing: bool
 };
