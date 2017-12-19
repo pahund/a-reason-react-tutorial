@@ -4,85 +4,91 @@ type item = {
   completed: bool
 };
 
-type state = {
-  /* this is a type w/ a type argument,
-  * similar to List<Item> in TypeScript,
-  * Flow, or Java */
-  items: list(item)
-};
+type state = list(item);
 
 type action =
-  | AddItem
+  | AddItem(string)
   | ToggleItem(int);
 
 let component = ReasonReact.reducerComponent("TodoApp");
 
 let lastId = ref(0);
-let newItem = () => {
+
+let newItem = (~text as title) => {
   lastId := lastId^ + 1;
-  {
-    id: lastId^,
-    title: "Click a button",
-    completed: true
-  }
+  {id: lastId^, title, completed: true}
 };
 
 module TodoItem = {
   let component = ReasonReact.statelessComponent("TodoItem");
-  let make = (~item, ~onToggle, children) => {
+  let make = (~item, ~onToggle, _) => {
     ...component,
     render: (_) =>
-      <div className="item" onClick=((_evt) => onToggle())>
-        <input
-          _type="checkbox"
-          checked=(Js.Boolean.to_js_boolean(item.completed))
-          /* TODO make interactive */
-        />
+      <div className="item" onClick=((_) => onToggle())>
+        <input _type="checkbox" checked=(Js.Boolean.to_js_boolean(item.completed)) />
         (Utils.str(item.title))
       </div>
   };
 };
 
-let make = children => {
+module Input = {
+  type state = string;
+  let component = ReasonReact.reducerComponent("Input");
+  let make = (~onSubmit, _) => {
+    ...component,
+    initialState: () => "",
+    reducer: (newText, _text) => ReasonReact.Update(newText),
+    render: ({state: text, reduce}) =>
+      <input
+        value=text
+        _type="text"
+        placeholder="Write something to do"
+        onChange=(reduce((evt) => Utils.valueFromEvent(evt)))
+        onKeyDown=(
+          (evt) =>
+            if (ReactEventRe.Keyboard.key(evt) == "Enter") {
+              onSubmit(text);
+              (reduce(() => ""))()
+            }
+        )
+      />
+  };
+};
+
+let make = (_) => {
   ...component,
-  initialState: () => {
-    items: [{
-      id: 0,
-      title: "Write some things to do",
-      completed: false
-    }]
-  },
-  reducer: (action, {items}) =>
+  initialState: () => [{id: 0, title: "Write some things to", completed: false}],
+  reducer: (action, items) =>
     switch action {
-      | AddItem => ReasonReact.Update({items: [newItem(), ...items]})
-      | ToggleItem(id) =>
-        let items = List.map(
-          (item) =>
-            item.id === id ?
-              {...item, completed: ! item.completed} : item,
-          items
-        );
-      ReasonReact.Update({items: items})
+    | AddItem(text) => ReasonReact.Update([newItem(~text), ...items])
+    | ToggleItem(id) =>
+      let items =
+        List.map((item) => item.id === id ? {...item, completed: ! item.completed} : item, items);
+      ReasonReact.Update(items)
     },
-  render: ({state: {items}, reduce}) => {
+  render: ({state: items, reduce}) => {
     let numItems = List.length(items);
     <div className="app">
       <div className="title">
         (Utils.str("What to do"))
-        <button onClick=(reduce((_evt) => AddItem))>
-          (Utils.str("Add something"))
-        </button>
+        <Input onSubmit=(reduce((text) => AddItem(text))) />
       </div>
-      <div className="items"> (
-        List.map((item) => <TodoItem 
-          key=(string_of_int(item.id))
-          onToggle=(reduce(() => ToggleItem(item.id)))
-          item 
-        />, items) |> Array.of_list |> ReasonReact.arrayToElement
-      ) </div>
-      <div className="footer">
-        (Utils.getFormattedNumberOfItems(numItems))
+      <div className="items">
+        (
+          List.map(
+            (item) =>
+              <TodoItem
+                key=(string_of_int(item.id))
+                onToggle=(reduce(() => ToggleItem(item.id)))
+                item
+              />,
+            items
+          )
+          |> Array.of_list
+          |> ReasonReact.arrayToElement
+        )
       </div>
+      <div className="footer"> (Utils.getFormattedNumberOfItems(numItems)) </div>
     </div>
   }
 };
