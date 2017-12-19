@@ -14,5 +14,14 @@
   "devDependencies": {
     "bs-platform": "^2.0.0",
     "webpack": "^3.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pahund/todo-list-reason-react"
+  },
+  "author": {
+    "name": "Patrick Hund",
+    "url": "https://github.com/pahund"
   }
 }
