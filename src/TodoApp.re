@@ -21,11 +21,16 @@ let newItem = (~text as title) => {
 
 module TodoItem = {
   let component = ReasonReact.statelessComponent("TodoItem");
+  let getClassName = ({completed}) => "item" ++ (completed ? " completed" : "");
   let make = (~item, ~onToggle, _) => {
     ...component,
     render: (_) =>
-      <div className="item" onClick=((_) => onToggle())>
-        <input _type="checkbox" checked=(Js.Boolean.to_js_boolean(item.completed)) />
+      <div className=(getClassName(item))>
+        <input
+          _type="checkbox"
+          onChange=((_) => onToggle())
+          checked=(Js.Boolean.to_js_boolean(item.completed))
+        />
         (Utils.str(item.title))
       </div>
   };

@@ -55,6 +55,11 @@ body {
   flex-direction: row;
 }
 
+.item.completed {
+  opacity: 0.666;
+  text-decoration: line-through;
+}
+
 .checkbox {
   margin-right: 20px;
 }
