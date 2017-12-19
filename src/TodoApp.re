@@ -40,7 +40,6 @@ let make = (_) => {
   render: ({state: items, reduce}) => {
     let numItems = List.length(items);
     <div className="app">
-      <MyComponent />
       <div className="title">
         (str("What to do"))
         <AddTodoField onSubmit=(reduce((text) => AddItem(text))) />
