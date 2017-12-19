@@ -1,5 +1,5 @@
 {
-  "name": "reason-to-do",
+  "name": "todo-list-reason-react",
   "scripts": {
     "start": "bsb -make-world -w",
     "js": "bsb -make-world",
