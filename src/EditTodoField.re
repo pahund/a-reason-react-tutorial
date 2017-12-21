@@ -7,13 +7,22 @@ type state = {
 
 let component = ReasonReact.reducerComponent("EditTodoField");
 
-let setInputElement = (theRef, {ReasonReact.state}) =>
-  state.inputElement := Js.Nullable.to_opt(theRef);
+let setInputElement = (theRef, {ReasonReact.state}) => state.inputElement := Js.toOption(theRef);
 
 let make = (~initialText, ~onSubmit, _) => {
   ...component,
   initialState: () => {text: initialText, inputElement: ref(None)},
   reducer: (newText, state) => ReasonReact.Update({...state, text: newText}),
+  didMount: ({state}) => {
+    Js.log("did mount");
+    switch state.inputElement^ {
+    | None => ()
+    | Some(r) =>
+      Js.log("focus");
+      ReactDOMRe.domElementToObj(r)##focus()
+    };
+    ReasonReact.Update(state)
+  },
   render: ({state: {text}, reduce, handle}) =>
     <input
       value=text
