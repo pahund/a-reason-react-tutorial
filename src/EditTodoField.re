@@ -9,6 +9,13 @@ let component = ReasonReact.reducerComponent("EditTodoField");
 
 let setInputElement = (theRef, {ReasonReact.state}) => state.inputElement := Js.toOption(theRef);
 
+let placeCursorInTextField = (theRef) => {
+  Js.log("focus");
+  let o = ReactDOMRe.domElementToObj(theRef);
+  ignore(o##focus());
+  o##setSelectionRange(1000, 1001)
+};
+
 let make = (~initialText, ~onSubmit, _) => {
   ...component,
   initialState: () => {text: initialText, inputElement: ref(None)},
@@ -17,9 +24,7 @@ let make = (~initialText, ~onSubmit, _) => {
     Js.log("did mount");
     switch state.inputElement^ {
     | None => ()
-    | Some(r) =>
-      Js.log("focus");
-      ReactDOMRe.domElementToObj(r)##focus()
+    | Some(r) => placeCursorInTextField(r)
     };
     ReasonReact.Update(state)
   },
