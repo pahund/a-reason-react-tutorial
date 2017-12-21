@@ -1,17 +1,33 @@
 open Utils;
 
-type state = string;
+type state = {
+  text: string,
+  inputElement: ref(option(Dom.element))
+};
 
 let component = ReasonReact.reducerComponent("EditTodoField");
 
+let setInputElement = (theRef, {ReasonReact.state}) => state.inputElement := Js.toOption(theRef);
+
 let make = (~initialText, ~onSubmit, _) => {
   ...component,
-  initialState: () => initialText,
-  reducer: (newText, _text) => ReasonReact.Update(newText),
-  render: ({state: text, reduce}) =>
+  initialState: () => {text: initialText, inputElement: ref(None)},
+  reducer: (newText, state) => ReasonReact.Update({...state, text: newText}),
+  didMount: ({state}) => {
+    Js.log("did mount");
+    switch state.inputElement^ {
+    | None => ()
+    | Some(r) =>
+      Js.log("focus");
+      ReactDOMRe.domElementToObj(r)##focus()
+    };
+    ReasonReact.Update(state)
+  },
+  render: ({state: {text}, reduce, handle}) =>
     <input
       value=text
       _type="text"
+      ref=(handle(setInputElement))
       placeholder="Todo description"
       onChange=(reduce((evt) => valueFromEvent(evt)))
       onKeyDown=(
