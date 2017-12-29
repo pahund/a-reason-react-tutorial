@@ -48,12 +48,16 @@ let make = (_) => {
   render: ({state: items, reduce}) => {
     let numItems = List.length(items);
     <div className="app">
-      <div className="title">
-        (str("What to do?"))
-        <div className="add-todo">
-          <AddTodoField onSubmit=(reduce((text) => AddItem(text))) />
-        </div>
-      </div>
+      MaterialUI.(
+        <AppBar position="static" color="default">
+          <Toolbar>
+            <Typography _type="title" color="inherit"> (str("What to do?")) </Typography>
+            <div className="add-todo">
+              <AddTodoField onSubmit=(reduce((text) => AddItem(text))) />
+            </div>
+          </Toolbar>
+        </AppBar>
+      )
       <div className="items">
         (
           List.map(
