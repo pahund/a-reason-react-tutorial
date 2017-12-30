@@ -4,21 +4,17 @@ open Types;
 
 let component = ReasonReact.statelessComponent("TodoItem");
 
-type style = {
-  root: ReactDOMRe.style,
-  completed: ReactDOMRe.style
-};
-
-let styles = {
-  root: ReactDOMRe.Style.make(), /* add root styles here */
-  completed: ReactDOMRe.Style.make(~opacity="0.666", ~textDecoration="line-through", ())
+module Styles = {
+  /* add root styles here */
+  let root = ReactDOMRe.Style.make();
+  let completed = ReactDOMRe.Style.make(~opacity="0.666", ~textDecoration="line-through", ());
 };
 
 let make = (~item: item, ~onToggle, ~onEditStart, ~onEditDone, _) => {
   ...component,
   render: (_) => {
-    let style = styles.root;
-    let style = item.completed ? ReactDOMRe.Style.combine(style, styles.completed) : style;
+    let style = Styles.root;
+    let style = item.completed ? ReactDOMRe.Style.combine(style, Styles.completed) : style;
     <div style>
       <input
         _type="checkbox"
