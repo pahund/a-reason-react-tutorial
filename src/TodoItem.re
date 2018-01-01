@@ -8,6 +8,7 @@ module Styles = {
   /* add root styles here */
   let root = ReactDOMRe.Style.make();
   let completed = ReactDOMRe.Style.make(~opacity="0.666", ~textDecoration="line-through", ());
+  let make = (isCompleted) => isCompleted ? ReactDOMRe.Style.combine(root, completed) : root;
 };
 
 let make = (~item: item, ~onToggle, ~onEditStart, ~onEditDone, _) => {
